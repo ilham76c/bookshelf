@@ -41,9 +41,11 @@ window.addEventListener('DOMContentLoaded', () => {
   function buttonDelete() {
     document.querySelectorAll('button[name="delete"]').forEach(item => {
       item.addEventListener('click', event => {
-        books = books.filter(obj => obj.id !== parseInt(event.target.dataset.id))
+        if (confirm("Delete book?")) {
+          books = books.filter(obj => obj.id !== parseInt(event.target.dataset.id))
 
-        setDataToStorage();
+          setDataToStorage();
+        }
       });
     });
   }
@@ -77,6 +79,7 @@ window.addEventListener('DOMContentLoaded', () => {
           <p>Tahun: ${book.year}</p>
           <div class="action">
             <button class="green" name="move" data-id="${book.id}">${ book.isComplete ? 'Belum selesai di Baca' : 'Selesai dibaca' }</button>
+            <button class="yellow" name="edit" data-id="${book.id}">Edit buku</button>
             <button class="red" name="delete" data-id="${book.id}">Hapus buku</button>
           </div>
         </article>`;
