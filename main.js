@@ -11,16 +11,39 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if (!isStorageExist) return;
 
-    const book = {
-      id: +new Date(),
-      title: document.getElementById('inputBookTitle').value,
-      author: document.getElementById('inputBookAuthor').value,
-      year: document.getElementById('inputBookYear').valueAsNumber,
-      isComplete: document.getElementById('inputBookIsComplete').checked
-    };
+    const bookId = document.getElementById('inputBookId').value;
+    const title = document.getElementById('inputBookTitle').value;
+    const author = document.getElementById('inputBookAuthor').value;
+    const year = document.getElementById('inputBookYear').valueAsNumber;
+    const isComplete = document.getElementById('inputBookIsComplete').checked;
 
-    books.push(book);
+    if (bookId) {
+      books = books.map(book => {
+        if (book.id === parseInt(bookId)) {
+          book.title = title;
+          book.author = author;
+          book.year = year;
+          book.isComplete = isComplete;
+        }
+
+        return book;
+      });
+
+      document.getElementById('inputBookId').value = '';
+    } else {
+      const book = {
+        id: +new Date(),
+        title,
+        author,
+        year,
+        isComplete
+      };
+
+      books.push(book);
+    }
+
     setDataToStorage();
+    document.getElementById('inputBook').reset();
   });
 
   // search book listener
@@ -38,11 +61,30 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // button delete
+  function buttonEdit() {
+    document.querySelectorAll('button[name="edit"]').forEach(item => {
+      item.addEventListener('click', event => {
+        const editBook = books.find(book => book.id === parseInt(event.target.dataset.id));
+
+        if (editBook) {
+          document.getElementById('inputBookId').value = editBook.id;
+          document.getElementById('inputBookTitle').value = editBook.title;
+          document.getElementById('inputBookAuthor').value = editBook.author;
+          document.getElementById('inputBookYear').value = editBook.year;
+          document.getElementById('inputBookIsComplete').checked = editBook.isComplete;
+
+          document.getElementById('inputBookTitle').focus();
+        }
+      });
+    });
+  }
+
+  // button delete
   function buttonDelete() {
     document.querySelectorAll('button[name="delete"]').forEach(item => {
       item.addEventListener('click', event => {
         if (confirm("Delete book?")) {
-          books = books.filter(obj => obj.id !== parseInt(event.target.dataset.id))
+          books = books.filter(obj => obj.id !== parseInt(event.target.dataset.id));
 
           setDataToStorage();
         }
@@ -96,6 +138,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     buttonDelete();
     buttonMove();
+    buttonEdit();
   }
 
   // save data to local storage
